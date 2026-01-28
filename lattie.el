@@ -493,7 +493,7 @@ Otherwise return the amount of times executed."
         (pt (point)))
     (lattie-dotimes arg
       (lattie--special-p)
-      (cond ((or (string-match-p "\\\\end\{" (match-string-no-properties 0))
+      (cond ((or ;;(string-match-p "\\\\end\{" (match-string-no-properties 0))
                  (string-match-p "\\\\begin\{" (match-string-no-properties 0)))
              (if (looking-at lattie-open-or-close-environment-regexp-for-looking-at)
                  (progn (goto-char (match-end 0))
