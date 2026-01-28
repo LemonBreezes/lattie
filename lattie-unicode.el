@@ -568,7 +568,4 @@ backup and creates an Abbrev table for Org CDLaTeX mode."
 ;;  (add-hook 'org-cdlatex-mode-hook #'lattie-unicode-fix-deprecated-chars))
 
 (provide 'lattie-unicode)
-
-
-(provide 'lattie-unicode)
 ;;; lattie-unicode.el ends here
