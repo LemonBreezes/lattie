@@ -57,65 +57,81 @@ Otherwise return the amount of times executed."
           (cl-decf i)
           (and (> i 0) i))))))
 
-(defvar lattie-dollar-regexp "^\\$\\|[^\\]\\$")
+;; --- Base Regexps ---
+(defvar lattie-dollar-regexp "\\(?:^\\|[^\\]\\)\\$")
 (defvar lattie-dollar-regexp-for-looking-at "\\$")
 
+;; --- Closing Math ---
 (defvar lattie-closing-math-regexp
   (concat lattie-dollar-regexp
-          "\\|[^\\]\\\\\\(\]\\|\)\\|end\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\]\\|)\\|end{[a-zA-Z*0-9]+}\\)"))
+
 (defvar lattie-closing-math-regexp-for-looking-at
   (concat lattie-dollar-regexp-for-looking-at
-          "\\|\\\\\\(\]\\|\)\\|end\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\\\\\(\\]\\|)\\|end{[a-zA-Z*0-9]+}\\)"))
+
+;; --- Opening Math ---
 (defvar lattie-opening-math-regexp
   (concat lattie-dollar-regexp
-          "\\|[^\\]\\\\\\(\\\[\\|\(\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\[\\|(\\|begin{[a-zA-Z*0-9]+}\\)"))
+
 (defvar lattie-opening-math-regexp-for-looking-at
   (concat lattie-dollar-regexp-for-looking-at
-          "\\|\\\\\\(\\\[\\|\(\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\\\\\(\\[\\|(\\|begin{[a-zA-Z*0-9]+}\\)"))
 
+;; --- Math with Whitespace ---
 (defvar lattie-closing-math-regexp-with-whitespace
-  (concat "\\s-*"
-          lattie-dollar-regexp
-          "\\|[^\\]\\\\\\(\\s-*\]\\|\\s-*\)\\|\\s-*end\{[^\\s$\\s-]+\}\\)"))
+  (concat "\\(?:\\s-*" lattie-dollar-regexp "\\)"
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\s-*\\]\\|\\s-*)\\|\\s-*end{[a-zA-Z*0-9]+}\\)"))
+
 (defvar lattie-closing-math-regexp-with-whitespace-for-looking-at
-  (concat "\\s-*"
-          lattie-dollar-regexp-for-looking-at
-          "\\|[^\\]\\\\\\(\\s-*\]\\|\\s-*\)\\|\\s-*end\{[^\\s$\\s-]+\}\\)"))
+  (concat "\\(?:\\s-*" lattie-dollar-regexp-for-looking-at "\\)"
+          "\\|\\\\\\(\\s-*\\]\\|\\s-*)\\|\\s-*end{[a-zA-Z*0-9]+}\\)"))
 
 (defvar lattie-opening-math-regexp-with-whitespace
-  (concat lattie-dollar-regexp
-          "\\s-*\\|[^\\]\\\\\\(\\\[\\s-*\\|\(\\s-*\\|begin\{[^\\s$\\s-]+\}\\)"))
-(defvar lattie-opening-math-regexp-with-whitespace-for-looking-at
-  (concat lattie-dollar-regexp-for-looking-at
-          "\\s-*\\|\\\\\\(\\\[\\s-*\\|\(\\s-*\\|begin\{[^\\s$\\s-]+\}\\)"))
+  (concat "\\(?:" lattie-dollar-regexp "\\s-*\\)"
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\[\\s-*\\|(\\s-*\\|begin{[a-zA-Z*0-9]+}\\)"))
 
+(defvar lattie-opening-math-regexp-with-whitespace-for-looking-at
+  (concat "\\(?:" lattie-dollar-regexp-for-looking-at "\\s-*\\)"
+          "\\|\\\\\\(\\[\\s-*\\|(\\s-*\\|begin{[a-zA-Z*0-9]+}\\)"))
+
+;; --- Closing or Environment ---
 (defvar lattie-closing-or-environment-math-regexp
   (concat lattie-dollar-regexp
-          "\\|[^\\]\\\\\\(\]\\|\)\\|end\{[^\\s$\\s-]+\}\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\]\\|)\\|end{[a-zA-Z*0-9]+}\\|begin{[a-zA-Z*0-9]+}\\)"))
+
 (defvar lattie-closing-or-environment-math-regexp-for-looking-at
   (concat lattie-dollar-regexp-for-looking-at
-          "\\|\\\\\\(\]\\|\)\\|end\{[^\\s$\\s-]+\}\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\\\\\(\\]\\|)\\|end{[a-zA-Z*0-9]+}\\|begin{[a-zA-Z*0-9]+}\\)"))
 
+;; --- Opening or Environment ---
 (defvar lattie-opening-or-environment-math-regexp
   (concat lattie-dollar-regexp
-          "\\|[^\\]\\\\\\(\\[\\|\(\\|end\{[^\\s$\\s-]+\}\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\[\\|(\\|end{[a-zA-Z*0-9]+}\\|begin{[a-zA-Z*0-9]+}\\)"))
+
 (defvar lattie-opening-or-environment-math-regexp-for-looking-at
   (concat lattie-dollar-regexp-for-looking-at
-          "\\|\\\\\\(\\[\\|\(\\|end\{[^\\s$\\s-]+\}\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\\\\\(\\[\\|(\\|end{[a-zA-Z*0-9]+}\\|begin{[a-zA-Z*0-9]+}\\)"))
 
+;; --- Closing or Opening ---
 (defvar lattie-closing-or-opening-math-regexp
   (concat lattie-dollar-regexp
-          "\\|[^\\]\\\\\\(\]\\|\)\\|\[\\|\(\\|end\{[^\\s$\\s-]+\}\\|begin\{[^\\s$\\s-]+\}\\)"))
-(defvar lattie-closing-or-opening-math-regexp
-  (concat lattie-dollar-regexp-for-looking-at
-          "\\|\\\\\\(\]\\|\)\\|\[\\|\(\\|end\{[^\\s$\\s-]+\}\\|begin\{[^\\s$\\s-]+\}\\)"))
+          "\\|\\(?:^\\|[^\\]\\)\\\\\\(\\]\\|)\\|\\[\\|(\\|end{[a-zA-Z*0-9]+}\\|begin{[a-zA-Z*0-9]+}\\)"))
 
-(defvar lattie-closing-environment-regexp "[^\\]\\\\end\{\\([^\\s$\\s-]+\\)\}")
-(defvar lattie-closing-environment-regexp-for-looking-at "\\\\end\{\\([^\\s$\\s-]+\\)\}")
-(defvar lattie-opening-environment-regexp "[^\\]\\\\begin\{\\([^\\s$\\s-]+\\)\}")
-(defvar lattie-opening-environment-regexp-for-looking-at "\\\\begin\{\\([^\\s$\\s-]+\\)\}")
-(defvar lattie-open-or-close-environment-regexp "[^\\]\\\\end\{[^\\s$\\s-]+\}\\|[^\\]\\\\begin\{[^\\s$\\s-]+\}")
-(defvar lattie-open-or-close-environment-regexp-for-looking-at "\\\\end\{[^\\s$\\s-]+\}\\|\\\\begin\{[^\\s$\\s-]+\}")
+(defvar lattie-closing-or-opening-math-regexp-for-looking-at
+  (concat lattie-dollar-regexp-for-looking-at
+          "\\|\\\\\\(\\]\\|)\\|\\[\\|(\\|end{[a-zA-Z*0-9]+}\\|begin{[a-zA-Z*0-9]+}\\)"))
+
+;; --- Specific Environments ---
+(defvar lattie-closing-environment-regexp "\\(?:^\\|[^\\]\\)\\\\end{\\([a-zA-Z*0-9]+\\)}")
+(defvar lattie-closing-environment-regexp-for-looking-at "\\\\end{\\([a-zA-Z*0-9]+\\)}")
+
+(defvar lattie-opening-environment-regexp "\\(?:^\\|[^\\]\\)\\\\begin{\\([a-zA-Z*0-9]+\\)}")
+(defvar lattie-opening-environment-regexp-for-looking-at "\\\\begin{\\([a-zA-Z*0-9]+\\)}")
+
+(defvar lattie-open-or-close-environment-regexp "\\(?:^\\|[^\\]\\)\\\\\\(?:begin\\|end\\){[a-zA-Z*0-9]+}")
+(defvar lattie-open-or-close-environment-regexp-for-looking-at "\\\\\\(?:begin\\|end\\){[a-zA-Z*0-9]+}")
 
 (defvar lattie-debug nil)
 
