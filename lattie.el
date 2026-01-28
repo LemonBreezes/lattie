@@ -9,7 +9,7 @@
 ;; Version: 0.0.1
 ;; Keywords: org latex
 ;; Homepage: https://github.com/LemonBreezes/lattie
-;; Package-Requires: ((emacs "24.3") (dash "2.20.0") (cdlatex) (texmathp))
+;; Package-Requires: ((emacs "24.3") (dash "2.20.0") (cdlatex "4.18.5") (texmathp))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
