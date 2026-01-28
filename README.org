@@ -1,0 +1,6 @@
+#+title: lattie.el
+
+This package provides some LaTeX Org editing utilities. I made it many years
+ago so the code is very messy. This project is not intended for public consumption.
+
+
