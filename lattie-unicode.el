@@ -11,7 +11,7 @@
 ;;                 (car)
 ;;                 (format "%x")
 ;;                 (s-upcase)))
-;;         (math-command (second unicode-abbrev-sequence)))
+;;         (math-command (cl-second unicode-abbrev-sequence)))
 ;;     (when (< (length hex) 5)
 ;;       ;; Pad hex with 0's to 5 digits
 ;;       (setq hex (concat (make-string (- 5 (length hex))
@@ -22,7 +22,7 @@
 (defun lattie-unicode--latex-header-entry (unicode-abbrev-sequence)
   (declare (pure t) (side-effect-free t))
   (let ((char (char-to-string (car unicode-abbrev-sequence)))
-        (math-command (second unicode-abbrev-sequence)))
+        (math-command (cl-second unicode-abbrev-sequence)))
     (concat "\\newunicodechar" "{" char "}{" math-command "}")))
 
 ;; (lattie-unicode--latex-header-entry '(?𝒜 "\\mathscr{A}" "sa"))
@@ -38,7 +38,7 @@
       (cl-loop for abbrev-input in abbrev-inputs
                collect (list abbrev-input abbrev-output nil 0)))))
 
-;; (lattie-unicode--abbrev-entry (third lattie-unicode-abbrev-sequences))
+;; (lattie-unicode--abbrev-entry (cl-third lattie-unicode-abbrev-sequences))
 ;; (lattie-unicode--abbrev-entry '(? "\\rightarrow" "ar"))
 
 (defun lattie-unicode--abbrev-table (unicode-abbrev-sequences)
@@ -70,13 +70,13 @@
     (clear-abbrev-table not-math-abbrev-table))
   (define-abbrev-table 'math-abbrev-table
     (nconc (lattie-unicode--abbrev-table unicode-abbrev-sequences)
-           (--map (list (first it) (second it) nil 0)
+           (--map (list (cl-first it) (cl-second it) nil 0)
                   extra-abbrevs))
     :enable-function #'lattie--math-or-math-shorthand-p
     :regexp "\\(?:[^a-zA-Z0-9-<>=|\\]+\\)\\([a-zA-Z0-9-<>=|]+\\)"
     :case-fixed t)
   (define-abbrev-table 'not-math-abbrev-table
-    (--map (list (first it) (third it) nil 0)
+    (--map (list (cl-first it) (cl-third it) nil 0)
            (--filter (> (length it) 2)
                      extra-abbrevs))
     :enable-function #'lattie-not-math-shorthand-nor-math-p
