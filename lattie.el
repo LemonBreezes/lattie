@@ -737,7 +737,7 @@ Otherwise return the amount of times executed."
                                                     'font-latex-math-face)))
                               (t (lattie--insert-string-with-1-space-padding-maybe ";" t))))
                    (?\) (if-let* ((parsed-syntax (syntax-ppss))
-                                  (op (second (syntax-ppss)))
+                                  (op (cl-second (syntax-ppss)))
                                   (in-top-sexp-p (and (integerp op)
                                                       (string-match-p "[\s\t\n],"
                                                                       (buffer-substring-no-properties (- op 2)
@@ -1437,7 +1437,7 @@ Otherwise return the amount of times executed."
            (org-babel-do-in-edit-buffer
             (when-let* ((op (car (sp-point-in-empty-sexp)))
                         (pair (sp-get-pair (car (sp-point-in-empty-sexp))))
-                        (insertion-specification (first (--first (equal (second it) "RET")
+                        (insertion-specification (first (--first (equal (cl-second it) "RET")
                                                                  (plist-get pair :post-handlers)))))
               (eval (sp--parse-insertion-spec insertion-specification)))
             (call-interactively #'newline-and-indent))))
@@ -1855,7 +1855,7 @@ Otherwise return the amount of times executed."
              (org-babel-do-in-edit-buffer
               (when-let* ((op (car (sp-point-in-empty-sexp)))
                           (pair (sp-get-pair (car (sp-point-in-empty-sexp))))
-                          (insertion-specification (first (--first (equal (second it) "SPC")
+                          (insertion-specification (first (--first (equal (cl-second it) "SPC")
                                                                    (plist-get pair :post-handlers)))))
                 (eval (sp--parse-insertion-spec insertion-specification)))
               (call-interactively #'self-insert-command)))))
@@ -1870,7 +1870,7 @@ Otherwise return the amount of times executed."
                        (not (lattie--at-right-side-of-closing-expression?)))
                   ;; (eq (char-before) ?,)
                   ;; Inside sexp?
-                  (eq (char-before (second (syntax-ppss))) ?,))
+                  (eq (char-before (cl-second (syntax-ppss))) ?,))
               (not (lattie--math-shorthand-p)))
          (if (and (eq (char-after) ?$)
                   (not (lattie--at-left-side-of-opening-expression?)))
